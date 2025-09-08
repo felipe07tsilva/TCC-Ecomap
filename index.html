@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMap - Rede Social</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">EcoMap</div>
+            <input type="text" class="search-bar" placeholder="Pesquisar...">
+            <div class="nav-icons">
+                <a><i class="fas fa-home" href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"></i></a>
+                <a><i class="far fa-user-circle" onclick="toggleProfileModal()"></i></a>
+                <a href="salvos.html"><i class="far fa-bookmark"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Stories -->
+        <div class="stories-container">
+            <div class="story">
+               
+            </div>
+        </div>
+
+        <!-- Criar Post -->
+        <div class="create-post">
+            <div class="create-post-header">
+                <img class="post-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face" alt="Você">
+                <span style="font-weight: 600;">Compartilhe algo interessante...</span>
+            </div>
+            <textarea id="postText" placeholder="O que você está pensando?"></textarea>
+            <img id="imagePreview" class="image-preview" style="display: none;">
+            <div class="create-post-actions">
+                <label class="file-input-label">
+                    <i class="fas fa-image"></i>
+                    <span>Adicionar foto</span>
+                    <input type="file" class="file-input" id="imageInput" accept="image/*">
+                </label>
+                <button class="publish-btn" onclick="createPost()">Publicar</button>
+            </div>
+        </div>
+
+        <!-- Posts Feed -->
+        <div id="postsContainer">
+            <!-- Posts serão adicionados aqui dinamicamente -->
+        </div>
+
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando mais posts...</p>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Seu Perfil</h3>
+                <button class="close-modal" onclick="toggleProfileModal()">&times;</button>
+            </div>
+            <div style="text-align: center;">
+                <img style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 16px;" 
+                     src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face" alt="Perfil">
+                <h4>@seu_usuario</h4>
+                <p style="color: #8e8e8e; margin: 8px 0;">Desenvolvedor apaixonado por tecnologia</p>
+                <button class="btn-user"><a href="EditUser.html">Editar</a></button>
+                <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                    <div style="text-align: center;">
+                        <strong id="postCount">0</strong>
+                        <div style="font-size: 12px; color: #8e8e8e;">posts</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <strong>156</strong>
+                        <div style="font-size: 12px; color: #8e8e8e;">seguidores</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <strong>89</strong>
+                        <div style="font-size: 12px; color: #8e8e8e;">seguindo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let posts = [];
+        let postIdCounter = 1;
+
+        // Posts iniciais de exemplo
+        const initialPosts = [
+            {
+                id: 1,
+                user: 'ana_silva',
+                avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b1e3?w=150&h=150&fit=crop&crop=face',
+                image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
+                caption: 'Que vista incrível! 🏔️ #natureza #montanha #aventura',
+                likes: 23,
+                liked: false,
+                time: '2h',
+                comments: [
+                    { user: 'joao_dev', text: 'Que lugar lindo! 😍' },
+                    { user: 'maria_foto', text: 'Preciso conhecer esse lugar!' }
+                ]
+            },
+            {
+                id: 2,
+                user: 'joao_dev',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+                image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=600&fit=crop',
+                caption: 'Programando no fim de semana 💻 #coding #javascript #webdev',
+                likes: 45,
+                liked: true,
+                time: '5h',
+                comments: [
+                    { user: 'pedro_viagem', text: 'Que setup top!' },
+                    { user: 'ana_silva', text: 'Inspirador! 🚀' }
+                ]
+            }
+        ];
+
+        posts = [...initialPosts];
+        postIdCounter = posts.length + 1;
+
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = '';
+
+            posts.forEach(post => {
+                const postElement = createPostElement(post);
+                container.appendChild(postElement);
+            });
+
+            updatePostCount();
+        }
+
+        function createPostElement(post) {
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post';
+            
+            const commentsHtml = post.comments.map(comment => 
+                `<div class="comment">
+                    <span class="comment-user">${comment.user}</span>
+                    ${comment.text}
+                </div>`
+            ).join('');
+
+            postDiv.innerHTML = `
+                <div class="post-header">
+                    <img class="post-avatar" src="${post.avatar}" alt="${post.user}">
+                    <span class="post-user">${post.user}</span>
+                    <span class="post-time">${post.time}</span>
+                </div>
+                ${post.image ? `<img class="post-image" src="${post.image}" alt="Post">` : ''}
+                <div class="post-actions">
+                    <button class="action-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                        <i class="${post.liked ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                    <button class="action-btn">
+                        <i class="far fa-comment"></i>
+                    </button>
+                    
+                    <button class="action-btn bookmark" onclick="salvarPost(${post.id})">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="post-likes">${post.likes} curtidas</div>
+                <div class="post-caption">
+                    <span class="caption-user">${post.user}</span>
+                    ${post.caption}
+                </div>
+                <div class="comments-section">
+                    ${commentsHtml}
+                </div>
+                <div class="add-comment">
+                    <input class="comment-input" placeholder="Adicione um comentário..." 
+                           onkeypress="handleCommentSubmit(event, ${post.id})">
+                    <span class="post-btn" onclick="addComment(${post.id})">Publicar</span>
+                </div>
+            `;
+
+            return postDiv;
+        }
+
+        function salvarPost(postId) {
+    // Encontra o post pelo ID
+    const post = posts.find(p => p.id === postId);
+    if (!post) {
+        alert('Post não encontrado!');
+        return;
+    }
+
+    // Cria um objeto com os dados que você quer salvar
+    const postSalvo = {
+        id: post.id,
+        user: post.user,
+        caption: post.caption,
+        image: post.image,
+        time: post.time,
+        likes: post.likes,
+        comments: post.comments
+    };
+
+    // Recupera posts salvos do localStorage (ou cria array vazio)
+    let salvos = JSON.parse(localStorage.getItem('postsSalvos')) || [];
+
+    // Verifica se já foi salvo anteriormente para evitar duplicação
+    const jaSalvo = salvos.some(p => p.id === postId);
+    if (jaSalvo) {
+        alert('Este post já foi salvo anteriormente.');
+        return;
+    }
+
+    // Adiciona o novo post
+    salvos.push(postSalvo);
+
+    // Salva novamente no localStorage
+    localStorage.setItem('postsSalvos', JSON.stringify(salvos));
+
+    alert('Post salvo com sucesso!');
+}
+
+        function toggleLike(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.liked = !post.liked;
+                post.likes += post.liked ? 1 : -1;
+                renderPosts();
+            }
+        }
+
+        function handleCommentSubmit(event, postId) {
+            if (event.key === 'Enter') {
+                addComment(postId);
+            }
+        }
+
+        function addComment(postId) {
+            const post = posts.find(p => p.id === postId);
+            const input = event.target.closest('.add-comment').querySelector('.comment-input');
+            const commentText = input.value.trim();
+            
+            if (commentText && post) {
+                post.comments.push({
+                    user: 'seu_usuario',
+                    text: commentText
+                });
+                input.value = '';
+                renderPosts();
+            }
+        }
+
+        function createPost() {
+            const textArea = document.getElementById('postText');
+            const imageInput = document.getElementById('imageInput');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            const text = textArea.value.trim();
+            
+            if (!text && !imageInput.files[0]) {
+                alert('Adicione um texto ou uma imagem para publicar!');
+                return;
+            }
+
+            const newPost = {
+                id: postIdCounter++,
+                user: 'seu_usuario',
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face',
+                image: imagePreview.style.display !== 'none' ? imagePreview.src : null,
+                caption: text,
+                likes: 0,
+                liked: false,
+                time: 'agora',
+                comments: []
+            };
+
+            posts.unshift(newPost);
+            
+            // Limpar formulário
+            textArea.value = '';
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+            
+            renderPosts();
+        }
+
+        function toggleProfileModal() {
+            const modal = document.getElementById('profileModal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function updatePostCount() {
+            const userPosts = posts.filter(post => post.user === 'seu_usuario');
+            document.getElementById('postCount').textContent = userPosts.length;
+        }
+
+        // Preview de imagem
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('profileModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Carregar posts iniciais
+        renderPosts();
+
+        // Simular carregamento de mais posts
+        let isLoading = false;
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && !isLoading) {
+                isLoading = true;
+                document.getElementById('loading').style.display = 'block';
+                
+                setTimeout(() => {
+                    // Adicionar posts fictícios
+                    const newPosts = [
+                        {
+                            id: postIdCounter++,
+                            user: 'maria_foto',
+                            avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+                            image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
+                            caption: 'Capturando momentos únicos 📸 #fotografia #arte',
+                            likes: Math.floor(Math.random() * 50) + 10,
+                            liked: Math.random() > 0.5,
+                            time: Math.floor(Math.random() * 12) + 1 + 'h',
+                            comments: []
+                        }
+                    ];
+                    
+                    posts.push(...newPosts);
+                    renderPosts();
+                    document.getElementById('loading').style.display = 'none';
+                    isLoading = false;
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>

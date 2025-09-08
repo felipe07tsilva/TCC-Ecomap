@@ -1,0 +1,68 @@
+<!-- salvos.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Posts Salvos</title>
+  <style>
+    .post {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Posts Salvos</h1>
+  <div id="listaSalvos"></div>
+
+  <a href="index.html">Voltar</a>
+
+  <script>
+    function carregarPostsSalvos() {
+      const lista = document.getElementById('listaSalvos');
+      lista.innerHTML = ""; // limpa a lista antes de recarregar
+
+      const salvos = JSON.parse(localStorage.getItem('postsSalvos')) || [];
+
+      if (salvos.length === 0) {
+        lista.innerHTML = "<p>Nenhum post salvo ainda.</p>";
+        return;
+      }
+
+      salvos.forEach((post, index) => {
+        const div = document.createElement('div');
+        div.classList.add('post');
+        div.innerHTML = `
+          <h2>${post.titulo}</h2>
+          <p>${post.conteudo}</p>
+          <button onclick="excluirPost(${index})">Excluir</button>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function excluirPost(index) {
+      let salvos = JSON.parse(localStorage.getItem('postsSalvos')) || [];
+
+      // Remove o post pelo índice
+      salvos.splice(index, 1);
+
+      // Atualiza o localStorage
+      localStorage.setItem('postsSalvos', JSON.stringify(salvos));
+
+      // Recarrega a lista de posts
+      carregarPostsSalvos();
+    }
+
+    window.onload = carregarPostsSalvos;
+  </script>
+</body>
+</html>
