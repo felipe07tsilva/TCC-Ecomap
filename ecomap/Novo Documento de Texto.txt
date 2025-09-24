@@ -1,0 +1,37 @@
+CREATE DATABASE IF NOT EXISTS catalogo_db;
+USE catalogo_db;
+
+DROP TABLE IF EXISTS produtos;
+CREATE TABLE produtos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    preco DECIMAL(10,2) NOT NULL,
+    foto VARCHAR(255),
+    link_compra VARCHAR(512),
+    categoria VARCHAR(48) DEFAULT ''
+);
+
+INSERT INTO produtos (nome, descricao, preco, foto, link_compra, categoria) VALUES
+('Caneca Verde de Bambu', 'Copo sustentável para viagem, 450ml fibra de bambu.', 22.08, 'uploads/copo.jpg', 'https://encurtador.com.br/Tkwd1', 'Utensílios'),
+('Esponja Vegana de Coco', 'Esponja biodegradável, feita 100% de coco e celulose.', 13.90, 'https://via.placeholder.com/220x140?text=Esponja+de+Coco', 'https://boomishop.com/produto/esponja-coco', 'Limpeza'),
+('Roupa 100% Algodão Orgânico', 'Moda sustentável sem corantes ou químicas.', 67.50, 'https://via.placeholder.com/220x140?text=Roupa+Algodao+Organico', 'https://modaverdeshop.com/roupa', 'Moda'),
+('Multiuso Lavanda BioZ', 'Limpa toda casa, biodegradável, sem petroquímicos.', 12.30, 'https://via.placeholder.com/220x140?text=Multiuso+BioZ', 'https://biozgreen.com/produto/', 'Limpeza'),
+('Squeeze Reutilizável Eco', 'Garrafa ecológica, reutilizável, livre de BPA.', 32.99, 'https://via.placeholder.com/220x140?text=Squeeze+Eco', 'https://encurtador.com.br/YN18w', 'Utensílios'),
+('Sabão em Pasta Biowash', 'Limpa, desengordura e dá brilho, 100% vegetal.', 15.90, 'https://via.placeholder.com/220x140?text=Sabao+Biowash', 'https://biozgreen.com/sabao/', 'Limpeza'),
+('Sacola de PET Reciclado', 'Sacola feita de plástico reciclado, resistente.', 8.90, 'https://via.placeholder.com/220x140?text=Sacola+PET', 'https://reciclarshop.com/sacola', 'Utensílios'),
+('Desodorante Natural', 'Sem alumínio, vegano, à base de óleos vegetais.', 21.50, 'https://via.placeholder.com/220x140?text=Desodorante+Natural', 'https://hempvegan.com.br/desodorante', 'Cosméticos'),
+('Papel Toalha Reutilizável', 'Kit com 20 unidades, lavável e ecológico.', 19.70, 'https://via.placeholder.com/220x140?text=Papel+Toalha+Ecológico', 'https://sobags.com.br/papel-toalha', 'Utensílios'),
+('Alimento Orgânico Integral', 'Arroz integral orgânico, sem agrotóxicos.', 16.49, 'https://via.placeholder.com/220x140?text=Arroz+Orgânico', 'https://naturalorganico.com/sacola', 'Alimentos'),
+('Sabonete Vegano', 'Sabonete artesanal com óleos vegetais.', 10.99, 'https://via.placeholder.com/220x140?text=Sabonete+Vegano', 'https://hempvegan.com.br/sabonete', 'Cosméticos'),
+('Eco Copo Reutilizável', 'Copo ecológico, ideal para bebidas quentes/frias.', 15.90, 'https://via.placeholder.com/220x140?text=Eco+Copo', 'https://encurtador.com.br/ekocopo', 'Utensílios'),
+('Escova de Dentes Bambu', 'Biodegradável e vegana, produzida com bambu.', 7.49, 'https://via.placeholder.com/220x140?text=Escova+Bambu', 'https://modaverdeshop.com/escova', 'Utensílios'),
+('Cosmético Vegano Facial', 'Creme hidratante facial vegano sem crueldade.', 34.90, 'https://via.placeholder.com/220x140?text=Cosmético+Facial', 'https://hempvegan.com.br/creme-facial', 'Cosméticos'),
+('Água Mineral Vegana', 'Embalagem reciclável, fonte sustentável.', 3.79, 'https://via.placeholder.com/220x140?text=Agua+Mineral+Vegana', 'https://naturalorganico.com.br/agua', 'Bebidas'),
+('Pasta de Dente Vegana', 'Pasta natural, sem flúor e vegana.', 14.90, 'https://via.placeholder.com/220x140?text=Pasta+de+Dente+Vegana', 'https://hempvegan.com.br/pasta-dente', 'Cosméticos'),
+('Filtro de Água Sustentável', 'Filtro com material reciclável e eficiente.', 120.00, 'https://via.placeholder.com/220x140?text=Filtro+de+Agua', 'https://ecoshop.com.br/filtro', 'Utensílios'),
+('Velas Naturais de Cera', 'Velas feitas com cera de soja e óleos essenciais.', 27.00, 'https://via.placeholder.com/220x140?text=Velas+Naturais', 'https://velasnatura.com/produto', 'Cosméticos'),
+('Bateria Solar Portátil', 'Carregador solar prático e sustentável.', 250.00, 'https://via.placeholder.com/220x140?text=Bateria+Solar', 'https://energiasolar.com/produto', 'Utensílios'),
+('Lixa de Unha Ecológica', 'Feita de material reciclado e biodegradável.', 6.80, 'https://via.placeholder.com/220x140?text=Lixa+de+Unha', 'https://ecobeleza.com/lixa', 'Cosméticos'),
+('Camiseta Algodão Orgânico', 'Roupas feitas 100% algodão orgânico e certificado.', 55.00, 'https://via.placeholder.com/220x140?text=Camiseta+Organica', 'https://modaverdeshop.com/camiseta', 'Moda'),
+('Leite Vegano de Amêndoas', 'Bebida vegetal, sem lactose e com nutrição natural.', 12.00, 'https://via.placeholder.com/220x140?text=Leite+Vegano', 'https://naturalorganico.com/leite', 'Bebidas');

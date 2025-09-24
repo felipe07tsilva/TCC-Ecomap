@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="index.html">
+  <link rel="stylesheet" href="stylesalvo.css">
+  <title>Posts Salvos</title>
+  <style>
+    .post {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Posts Salvos</h1>
+  <div id="listaSalvos"></div>
+
+  <a href="comunidade.html">Voltar</a>
+
+  <script>
+    function carregarPostsSalvos() {
+      const lista = document.getElementById('listaSalvos');
+      lista.innerHTML = ""; // limpa a lista antes de recarregar
+
+      const salvos = JSON.parse(localStorage.getItem('postsSalvos')) || [];
+
+      if (salvos.length === 0) {
+        lista.innerHTML = "<p>Nenhum post salvo ainda.</p>";
+        return;
+      }
+
+      salvos.forEach((post, index) => {
+    const div = document.createElement('div');
+    div.classList.add('post');
+
+    // Gere os comentários em HTML se necessário
+    const commentsHtml = post.comments?.map(comment => `
+        <div class="comment">
+            <span class="comment-user">${comment.user}</span>
+            ${comment.text}
+        </div>
+    `).join('') || '';
+
+    div.innerHTML = `
+        <div class="post-header">
+            <img class="post-avatar" src="${post.avatar}" alt="${post.user}">
+            <span class="post-user">${post.user}</span>
+            <span class="post-time">${post.time}</span>
+        </div>
+        ${post.image ? `<img class="post-image" src="${post.image}" alt="Post">` : ''}
+        <div class="post-actions">
+            <button class="action-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                <i class="${post.liked ? 'fas' : 'far'} fa-heart"></i>
+            </button>
+            <button class="action-btn">
+                <i class="far fa-comment"></i>
+            </button>
+            <button class="action-btn bookmark" onclick="salvarPost(${post.id})">
+                <i class="far fa-bookmark"></i>
+            </button>
+        </div>
+        <div class="post-likes">${post.likes} curtidas</div>
+        <div class="post-caption">
+            <span class="caption-user">${post.user}</span>
+            ${post.caption}
+        </div>
+        <div class="comments-section">
+            ${commentsHtml}
+        </div>
+        
+        <button onclick="excluirPost(${index})">Excluir</button>
+    `;
+
+    lista.appendChild(div);
+});
+
+    }
+
+    function excluirPost(index) {
+      let salvos = JSON.parse(localStorage.getItem('postsSalvos')) || [];
+
+      // Remove o post pelo índice
+      salvos.splice(index, 1);
+
+      // Atualiza o localStorage
+      localStorage.setItem('postsSalvos', JSON.stringify(salvos));
+
+      // Recarrega a lista de posts
+      carregarPostsSalvos();
+    }
+
+    window.onload = carregarPostsSalvos;
+  </script>
+</body>
+</html>
